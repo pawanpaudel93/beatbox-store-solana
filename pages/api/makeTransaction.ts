@@ -1,7 +1,8 @@
+import { createTransferCheckedInstruction, getAssociatedTokenAddress, getMint } from "@solana/spl-token"
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
-import { clusterApiUrl, Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { clusterApiUrl, Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { NextApiRequest, NextApiResponse } from "next";
-import { shopAddress } from "../../lib/addresses";
+import { shopAddress, usdcAddress } from "../../lib/addresses";
 import calculatePrice from "../../lib/calculatePrice";
 
 export type MakeTransactionInputData = {
@@ -47,6 +48,12 @@ export default async function handler(
         const endpoint = clusterApiUrl(network);
         const connection = new Connection(endpoint);
 
+        // get details about usdc token
+        const usdcMint = await getMint(connection, usdcAddress);
+        // get buyer usdc token account address
+        const buyerUsdcAddress = await getAssociatedTokenAddress(usdcAddress, buyerPublicKey);
+        const shopUsdcAddress = await getAssociatedTokenAddress(usdcAddress, shopPublicKey);
+
         const { blockhash } = await connection.getLatestBlockhash("finalized");
 
         // Create a transaction
@@ -56,11 +63,14 @@ export default async function handler(
         })
 
         // create a transfer to the shop
-        const transferInstruction = SystemProgram.transfer({
-            fromPubkey: buyerPublicKey,
-            toPubkey: shopPublicKey,
-            lamports: amount.multipliedBy(LAMPORTS_PER_SOL).toNumber(),
-        })
+        const transferInstruction = createTransferCheckedInstruction(
+            buyerUsdcAddress,
+            usdcAddress,
+            shopUsdcAddress,
+            buyerPublicKey,
+            amount.toNumber() * 10 ** usdcMint.decimals,
+            usdcMint.decimals
+        )
 
         // add reference to the instruction as a key so that we can query the transaction with it
         transferInstruction.keys.push({
@@ -82,7 +92,7 @@ export default async function handler(
 
         res.status(200).json({
             transaction: base64,
-            message: "Thanks for your order!",
+            message: "Thanks for your order! 🎵",
         })
     } catch (error) {
         console.error(error)
