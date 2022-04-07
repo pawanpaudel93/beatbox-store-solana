@@ -12,11 +12,14 @@ export default function Products({ submitTarget, enabled }: Props) {
 
   return (
     <form method='get' action={submitTarget} ref={formRef}>
-      <div className='flex flex-col gap-16'>
-        <div className="grid grid-cols-2 gap-8">
+      <div className='flex flex-col gap-16 mt-6'>
+        <div className="grid grid-cols-2 gap-8 border-2">
           {products.map(product => {
             return (
               <div className="rounded-md bg-white text-left p-8" key={product.id}>
+                <div className="py-2">
+                  <img src={product.image} alt={product.name} className="h-48 w-48 rounded-lg" />
+                </div>
                 <h3 className="text-2xl font-bold">{product.name}</h3>
                 <p className="text-sm text-gray-800">{product.description}</p>
                 <p className="my-4">

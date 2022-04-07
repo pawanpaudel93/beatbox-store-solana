@@ -6,6 +6,7 @@ export const products = [
     unitName: 'tshirt', // shows after the price, eg. 0.05 SOL/box
     priceSol: 0.05,
     priceUsd: 5,
+    image: "/images/tshirt.jpg",
   },
   {
     id: 'beatbox-hoodie',
@@ -14,5 +15,6 @@ export const products = [
     unitName: 'hoodie',
     priceSol: 0.1,
     priceUsd: 10,
+    image: "/images/hoodie.jpg",
   }
 ]

@@ -7,6 +7,7 @@ import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adap
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui"
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base"
 import { clusterApiUrl } from "@solana/web3.js"
+import NavBar from "../components/NavBar"
 
 // Default styles for wallet ui
 require('@solana/wallet-adapter-react-ui/styles.css');
@@ -31,6 +32,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             <Head>
               <title>Beatbox Store</title>
             </Head>
+            <NavBar />
             <Component {...pageProps} />
           </Layout>
         </WalletModalProvider>
